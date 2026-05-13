@@ -1,7 +1,7 @@
 """
 detection_integration.py  (v2)
 
-Thin glue between the training loop (train_mmlejepa_nuscenes.py)
+Thin glue between the training loop (train.py)
 and the detection/segmentation probes.
 
 Key changes from v1
@@ -11,8 +11,8 @@ Key changes from v1
 * Only `MMEncoderB` currently exposes `_forward_features_with_patches()`.
   Other architectures fall back to repeating the CLS token.
 
-Usage in train_mmlejepa_nuscenes.py
------------------------------------
+Usage in train.py
+------------------
     from src.detection_integration import (
         create_det_seg_probes,
         extract_patch_embeddings,
@@ -296,7 +296,7 @@ def log_det_seg_metrics(
 
 INTEGRATION_SNIPPET = """
 # ============================================================================
-# INTEGRATION SNIPPET  (add to train_mmlejepa_nuscenes.py)
+# INTEGRATION SNIPPET  (add to train.py)
 # ============================================================================
 
 # ── Imports (top of file) ────────────────────────────────────────────────────

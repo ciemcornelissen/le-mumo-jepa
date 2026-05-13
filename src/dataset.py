@@ -3229,7 +3229,7 @@ if __name__ == "__main__":
     # Test dataset
     print("Testing Option B (Range Images)...")
     ds_b = MMNuScenesDataset(
-        "/project_ghent/jepa/nuscenes_data",
+        "/path/to/nuscenes_data",
         split="train",
         arch="B",
         V=2,
@@ -3252,7 +3252,7 @@ if __name__ == "__main__":
     
     print("\nTesting Option A (Points)...")
     ds_a = MMNuScenesDataset(
-        "/project_ghent/jepa/nuscenes_data",
+        "/path/to/nuscenes_data",
         split="train", 
         arch="A",
         V=2,

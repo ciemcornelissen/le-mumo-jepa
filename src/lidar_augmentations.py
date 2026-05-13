@@ -1888,7 +1888,7 @@ COPY_PASTE_PRESETS = {
 if __name__ == '__main__':
     import argparse
     parser = argparse.ArgumentParser(description='Build GT database for copy-paste augmentation')
-    parser.add_argument('--dataroot', type=str, default='/project_ghent/jepa/nuscenes_data',
+    parser.add_argument('--dataroot', type=str, default='/path/to/nuscenes_data',
                         help='Path to NuScenes data')
     parser.add_argument('--output_dir', type=str, default=None,
                         help='Output directory for GT database')

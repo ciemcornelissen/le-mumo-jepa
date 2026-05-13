@@ -1572,7 +1572,7 @@ def main(cfg: DictConfig):
     trainer_started_wandb_run = False
     if use_wandb:
         if getattr(wandb, 'run', None) is None:
-            wandb.init(project="MM-LeJEPA-nuScenes", config=dict(cfg))
+            wandb.init(project="le-mumo-jepa", config=dict(cfg))
             trainer_started_wandb_run = True
         run_obj = getattr(wandb, 'run', None)
         run_name = getattr(run_obj, 'name', None)
@@ -3459,7 +3459,7 @@ def main(cfg: DictConfig):
                     
                 # Handle dictionary inputs (Global vs Local)
                 # We need to extract the "Clean Full View" for probing.
-                # In mm_dataset.py, we appended the full view to the 'global' list.
+                # In dataset.py, we appended the full view to the 'global' list.
                 # So the last element of 'global' is the probe view.
                 
                 cam_views_probe = None

@@ -34,10 +34,12 @@ flir_data/
 
 # Checkpoints and logs
 checkpoints/
+saved_models/
 outputs/
 wandb/
 runs/
 logs/
+cache/
 *.ckpt
 *.pth
 *.pt

@@ -96,7 +96,7 @@ def compute_center_crop_region(
 ) -> Tuple[int, int, int, int]:
     """Compute the center-square crop region in original pixel coords.
 
-    Mirrors `_apply_test_aug` in mm_dataset.py:
+    Mirrors `_apply_test_aug` in dataset.py:
         1. Resize smallest edge to target_size → scale factor
         2. CenterCrop(target_size) on the resized image
         3. Back-project crop to original pixel coords

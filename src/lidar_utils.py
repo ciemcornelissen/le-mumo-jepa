@@ -403,7 +403,8 @@ if __name__ == "__main__":
     # Quick test
     import glob
     
-    lidar_files = glob.glob("/project_ghent/jepa/nuscenes_data/samples/LIDAR_TOP/*.pcd.bin")
+    dataroot = sys.argv[1] if len(sys.argv) > 1 else "/path/to/nuscenes_data"
+    lidar_files = glob.glob(os.path.join(dataroot, "samples/LIDAR_TOP/*.pcd.bin"))
     if lidar_files:
         pts = load_lidar_bin(lidar_files[0])
         print(f"Loaded {pts.shape[0]} points with shape {pts.shape}")
@@ -418,5 +419,5 @@ if __name__ == "__main__":
         # Save visualization
         rgb = range_image_to_rgb(range_img)
         from PIL import Image
-        Image.fromarray(rgb).save("/project_ghent/jepa/outputs/range_image_test.png")
-        print("Saved range image visualization to outputs/range_image_test.png")
+        Image.fromarray(rgb).save("range_image_test.png")
+        print("Saved range image visualization to range_image_test.png")
