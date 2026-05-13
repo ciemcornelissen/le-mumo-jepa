@@ -1,0 +1,50 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution / packaging
+dist/
+build/
+*.egg-info/
+*.egg
+
+# Virtual environments
+.env
+.venv
+env/
+venv/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Data
+data/
+nuscenes_data/
+waymo_data/
+flir_data/
+
+# Checkpoints and logs
+checkpoints/
+outputs/
+wandb/
+runs/
+logs/
+*.ckpt
+*.pth
+*.pt
+
+# Experiment artifacts
+*.log
+*.csv
+
+# PDF originals (PNGs in assets/ are tracked)
+*.pdf

@@ -1,0 +1,33 @@
+dataroot: /project_ghent/jepa/nuscenes_data
+split_strategy: scene_based
+debug: false
+epochs: 10
+local_img_size: 96
+V: 2
+proj_dim: 128
+lamb: 0.1
+batch_size: 32
+bs: 32
+imagebind_max_bs: 8
+base_lr: 0.002
+lr: 0.002
+arch: B
+seed: 42
+limit_train_batches: null
+limit_val_batches: null
+global_crops_scale: [0.4, 1.0]
+local_crops_scale: [0.05, 0.4]
+local_crops_number: 4
+modality_dropout: 0.0
+
+# Dataset selection: 'nuscenes', 'waymo', or 'flir'
+dataset: nuscenes
+waymo_dataroot: null  # Path to Waymo data (if dataset=waymo)
+flir_dataroot: null  # Path to FLIR ADAS v2 root (if dataset=flir)
+flir_train_split: train+video_test  # train, video_test, or train+video_test
+flir_val_split: val  # val or video_test
+
+# LiDAR augmentation: 'none', 'light', 'moderate', 'strong'
+lidar_aug_preset: none
+copy_paste_preset: none
+gt_database_path: null
