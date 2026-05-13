@@ -1,24 +1,11 @@
-"""
-MM-LeJEPA Training on nuScenes Dataset
-Multi-Modal extension combining camera and LiDAR with SIGReg objective.
+"""Le MuMo JEPA training entrypoint.
 
-Usage:
-    # Option A (Separate encoders)
-    python train_mmlejepa_nuscenes.py \\
-        +dataroot=/project_ghent/jepa/nuscenes_data \\
-        +arch=A +lamb=0.02 +V=2 +proj_dim=16 +lr=2e-3 +bs=32 +epochs=10
-
-    # Option B (Unified encoder with range images) - Recommended
-    python train_mmlejepa_nuscenes.py \\
-        +dataroot=/project_ghent/jepa/nuscenes_data \\
-        +arch=B +lamb=0.02 +V=2 +proj_dim=16 +lr=2e-3 +bs=32 +epochs=10
-
-    Options:
-        +arch=A/B         Architecture option (A=separate, B=unified)
-        +global_crops_scale=(0.4, 1.0)
-        +local_crops_scale=(0.05, 0.4)
-        +local_crops_number=4
-        +modality_dropout=0.2  Probability of dropping one modality during training
+Example:
+    python train.py \
+        +dataroot=/path/to/nuscenes_data \
+        +arch=C \
+        +fusion_tokens_sigreg=true \
+        +fusion_tokens_variant=prune_after_first
 """
 
 from __future__ import annotations
@@ -89,11 +76,6 @@ def ensure_imagebind_available(install_all_envs: bool = True):
     if importlib.util.find_spec("imagebind") is None:
         raise ImportError("ImageBind installation completed but the package is still unavailable")
 
-install_and_import("timm")
-install_and_import("hydra-core", "hydra")
-install_and_import("omegaconf")
-install_and_import("nuscenes-devkit", "nuscenes")
-
 import timm
 import hydra
 import tqdm
@@ -141,7 +123,7 @@ from src.novel_regularizers import (
 )
 
 # Baseline losses and encoders
-from baseline_losses import (
+from src.losses import (
     VICRegLoss,
     InfoNCELoss,
     AdaSigNCELoss,
@@ -307,7 +289,7 @@ def _resolve_pretrained_encoder_path(checkpoint_path: str | os.PathLike) -> Path
     if checkpoint_path.exists():
         return checkpoint_path
 
-    run_dir = Path("/project_ghent/jepa/saved_models") / checkpoint_path
+    run_dir = PROJECT_DIR / "saved_models" / checkpoint_path
     if run_dir.is_dir():
         latest_path = run_dir / "latest.pt"
         if latest_path.exists():
@@ -5960,7 +5942,7 @@ def main(cfg: DictConfig):
 
     # Save model
     if not debug_model and run_name is not None:
-        save_dir = Path("/project_ghent/jepa/saved_models") / run_name
+        save_dir = PROJECT_DIR / "saved_models" / run_name
         save_dir.mkdir(parents=True, exist_ok=True)
         save_dict = {
             "encoder": net.state_dict(),

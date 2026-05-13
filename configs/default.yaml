@@ -1,4 +1,4 @@
-dataroot: /project_ghent/jepa/nuscenes_data
+dataroot: /path/to/nuscenes_data
 split_strategy: scene_based
 debug: false
 epochs: 10
@@ -11,7 +11,7 @@ bs: 32
 imagebind_max_bs: 8
 base_lr: 0.002
 lr: 0.002
-arch: B
+arch: C
 seed: 42
 limit_train_batches: null
 limit_val_batches: null
@@ -19,6 +19,13 @@ global_crops_scale: [0.4, 1.0]
 local_crops_scale: [0.05, 0.4]
 local_crops_number: 4
 modality_dropout: 0.0
+
+# Default paper setup: pruned fusion tokens over RGB + aligned 1-channel companion modality.
+lidar_mode: depth
+aligned_mode: true
+fusion_tokens_sigreg: true
+fusion_tokens_variant: prune_after_first
+fusion_start_layer: 0
 
 # Dataset selection: 'nuscenes', 'waymo', or 'flir'
 dataset: nuscenes

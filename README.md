@@ -52,6 +52,8 @@ cd le-mumo-jepa
 pip install -r requirements.txt
 ```
 
+`requirements.txt` covers the core paper training path. Optional ablations such as ImageBind, Sinkhorn/GeomLoss, and THOP profiling require extra dependencies or weights.
+
 ## Usage
 
 ### Self-Supervised Pretraining
@@ -59,9 +61,13 @@ pip install -r requirements.txt
 ```bash
 # Waymo (RGB + LiDAR depth)
 python train.py \
-    +dataroot=/path/to/waymo_data \
     +dataset=waymo \
-    +arch=C_fusion_tokens \
+    +waymo_dataroot=/path/to/waymo_data \
+    +arch=C \
+    +fusion_tokens_sigreg=true \
+    +fusion_tokens_variant=prune_after_first \
+    +aligned_mode=true \
+    +lidar_mode=depth \
     +lamb=0.1 \
     +V=2 \
     +proj_dim=128 \
@@ -73,7 +79,11 @@ python train.py \
 python train.py \
     +dataroot=/path/to/nuscenes_data \
     +dataset=nuscenes \
-    +arch=C_fusion_tokens \
+    +arch=C \
+    +fusion_tokens_sigreg=true \
+    +fusion_tokens_variant=prune_after_first \
+    +aligned_mode=true \
+    +lidar_mode=depth \
     +lamb=0.1 \
     +V=2 \
     +proj_dim=128 \
@@ -83,10 +93,12 @@ python train.py \
 
 # FLIR ADAS (RGB + Thermal)
 python train.py \
-    +dataroot=/path/to/nuscenes_data \
     +dataset=flir \
     +flir_dataroot=/path/to/flir_adas_v2 \
-    +arch=C_fusion_tokens \
+    +arch=C \
+    +fusion_tokens_sigreg=true \
+    +fusion_tokens_variant=prune_after_first \
+    +lidar_mode=depth \
     +lamb=0.1 \
     +epochs=20
 ```
@@ -97,18 +109,22 @@ python train.py \
 python finetune.py \
     --checkpoint /path/to/pretrained.pth \
     --dataset flir \
-    --dataroot /path/to/flir_adas_v2 \
+    --flir_dataroot /path/to/flir_adas_v2 \
     --epochs 30 \
-    --lr 2e-5
+    --encoder_lr 2e-5 \
+    --decoder_lr 1e-4
 ```
 
 ### Configuration
-
-Default training configuration is in [`configs/default.yaml`](configs/default.yaml). Key hyperparameters:
+Default training configuration is in [`configs/default.yaml`](configs/default.yaml). The checked-in defaults match the paper-style pruned fusion-token setup. Key hyperparameters:
 
 | Parameter | Default | Description |
 |-----------|---------|-------------|
-| `arch` | `C_fusion_tokens` | Encoder architecture (the default Le MuMo JEPA model) |
+| `arch` | `C` | Base architecture family used for fusion-token training |
+| `fusion_tokens_sigreg` | `true` | Enables the learnable fusion-token Le MuMo JEPA variant |
+| `fusion_tokens_variant` | `prune_after_first` | Pruned fusion-token routing used in the paper |
+| `aligned_mode` | `true` | Uses a 1-channel aligned companion modality input |
+| `lidar_mode` | `depth` | Uses aligned depth-style inputs instead of 5-channel range images |
 | `lamb` | `0.1` | SIGReg trade-off weight |
 | `V` | `2` | Number of global crops |
 | `local_crops_number` | `4` | Number of local crops |
@@ -122,11 +138,11 @@ Default training configuration is in [`configs/default.yaml`](configs/default.ya
 ```
 le-mumo-jepa/
 ├── train.py                        # Main SSL pretraining script
-├── finetune.py                     # End-to-end fine-tuning script
+├── finetune.py                     # Downstream fine-tuning / evaluation script
 ├── configs/
 │   └── default.yaml                # Default training configuration
 ├── src/
-│   ├── encoder.py                  # Multi-modal encoders (MMEncoderC_FusionTokens)
+│   ├── encoder.py                  # Multi-modal encoders (including MMEncoderC_FusionTokens)
 │   ├── losses.py                   # Baseline losses (VICReg, InfoNCE)
 │   ├── baseline_encoders.py        # Baseline encoders (DINOv3, ImageBind, MultiMAE)
 │   ├── novel_regularizers.py       # Additional regularizers (GMM, Sinkhorn, Spectral)

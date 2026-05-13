@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Fine-tune pre-trained MM-LeJEPA backbones for 3D bounding box prediction.
+Fine-tune pre-trained Le MuMo JEPA backbones for downstream detection.
 
 Loads a checkpoint from the sweep experiments, attaches a powerful
 DETR-style multi-layer transformer decoder, and fine-tunes end-to-end
@@ -11,19 +11,19 @@ to measure sample efficiency of learned representations.
 
 Usage:
     # List available checkpoints
-    python finetune_bbox3d.py --list_checkpoints
+    python finetune.py --list_checkpoints
 
     # Fine-tune with 10% training data
-    python finetune_bbox3d.py \
+    python finetune.py \
         --checkpoint saved_models/charmed-sweep-10/mmlejepa_C_lamb0.1_final.pt \
         --data_fraction 0.1 \
         --epochs 20
 
     # Debug mode (random data, no dataloader)
-    python finetune_bbox3d.py --debug --epochs 1
+    python finetune.py --debug --epochs 1
 
-    # Sweep agent mode (like sweep_agent_novel.py)
-    SWEEP_ID='abc123' python finetune_bbox3d.py
+    # Sweep agent mode
+    SWEEP_ID='abc123' python finetune.py
 """
 
 import sys
@@ -54,16 +54,12 @@ except ImportError:
 PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, PROJECT_ROOT)
 
-# Install deps if needed
-import subprocess
-subprocess.run([sys.executable, '-m', 'pip', 'install', '-q', 'omegaconf', 'hydra-core', 'wandb', 'timm'], check=True)
-
 import wandb
 from scipy.optimize import linear_sum_assignment
 
 # --- Sweep agent configuration (env vars, matching sweep_agent_novel.py) ---
 SWEEP_ID = os.environ.get('SWEEP_ID', None)
-PROJECT_NAME = os.environ.get('PROJECT_NAME', 'mm-lejepa-finetune-bbox3d-waymo')
+PROJECT_NAME = os.environ.get('PROJECT_NAME', 'le-mumo-jepa-finetune-bbox3d-waymo')
 SWEEP_COUNT = int(os.environ.get('SWEEP_COUNT', '100'))
 
 from src.encoder import create_mm_encoder, get_vit_config, MMEncoderC_FusionTokens, MMEncoderC_LiDARRoPE
@@ -75,7 +71,7 @@ from src.detection_probes import (
     CATEGORY_TO_DETECTION,
     NuScenesDetectionMetrics,
 )
-from train_mmlejepa_nuscenes import (
+from train import (
     ViTEncoder,
     extract_patch_tokens,
     get_input_stats,
@@ -1421,7 +1417,7 @@ def main(sweep_config: Optional[Dict] = None):
     Args:
         sweep_config: If provided (from wandb.agent), overrides CLI args with sweep params.
     """
-    parser = argparse.ArgumentParser(description='Fine-tune MM-LeJEPA for 3D BBox prediction')
+    parser = argparse.ArgumentParser(description='Fine-tune Le MuMo JEPA for downstream detection')
     parser.add_argument('--checkpoint', type=str, default=None,
                         help='Path to .pt checkpoint or run name in saved_models/')
     parser.add_argument('--list_checkpoints', action='store_true',
@@ -1443,7 +1439,7 @@ def main(sweep_config: Optional[Dict] = None):
                         help='Path to nuScenes data')
     parser.add_argument('--wandb', action='store_true',
                         help='Enable WandB logging')
-    parser.add_argument('--wandb_project', type=str, default='mm-lejepa-finetune-bbox3d',
+    parser.add_argument('--wandb_project', type=str, default='le-mumo-jepa-finetune-bbox3d',
                         help='WandB project name')
     parser.add_argument('--debug', action='store_true',
                         help='Debug mode: random data, 1 batch')

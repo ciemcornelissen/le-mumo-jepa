@@ -7,4 +7,5 @@ numpy>=1.24.0
 tqdm>=4.65.0
 scipy>=1.10.0
 Pillow>=9.5.0
+nuscenes-devkit>=1.1.11
 wandb>=0.15.0
