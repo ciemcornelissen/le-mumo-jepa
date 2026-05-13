@@ -54,7 +54,14 @@ except ImportError:
 PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, PROJECT_ROOT)
 
-import wandb
+# Optional wandb
+try:
+    import wandb
+    WANDB_AVAILABLE = True
+except ImportError:
+    WANDB_AVAILABLE = False
+    print("WandB not available, logging to console only")
+
 from scipy.optimize import linear_sum_assignment
 
 # --- Sweep agent configuration (env vars, matching sweep_agent_novel.py) ---
@@ -2155,7 +2162,7 @@ def main(sweep_config: Optional[Dict] = None):
     scaler = GradScaler()
 
     # ── WandB ─────────────────────────────────────────────────────────────
-    use_wandb = args.wandb and not args.debug
+    use_wandb = WANDB_AVAILABLE and args.wandb and not args.debug
     if use_wandb:
         if wandb.run is None:
             wandb_key_path = os.path.join(PROJECT_ROOT, '.wandb_key')
@@ -2851,7 +2858,10 @@ def sweep_train():
 
 if __name__ == '__main__':
     if SWEEP_ID:
-        # Sweep agent mode: read hyperparameters from wandb
+        # Sweep agent mode: requires wandb
+        if not WANDB_AVAILABLE:
+            print("ERROR: wandb is required for sweep mode. Install with: pip install wandb")
+            sys.exit(1)
         print(f"Starting sweep agent: {PROJECT_NAME}/{SWEEP_ID}")
         wandb_key_path = os.path.join(PROJECT_ROOT, '.wandb_key')
         if os.path.exists(wandb_key_path):
